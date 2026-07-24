@@ -1,0 +1,50 @@
+[
+  {
+    "id": "r1",
+    "userName": "Rakib Hasan",
+    "ratings": 4.5,
+    "review": "Smooth delivery and polite staff.",
+    "user_photoURL": "https://placehold.co/100x100/CAEB66/03373D?text=RH",
+    "date": "2025-05-08T14:30:00.000Z"
+  },
+  {
+    "id": "r2",
+    "userName": "Jane Ahmed",
+    "ratings": 3.8,
+    "review": "Took a bit longer than expected, but okay overall.",
+    "user_photoURL": "https://placehold.co/100x100/CAEB66/03373D?text=JA",
+    "date": "2025-06-10T10:15:00.000Z"
+  },
+  {
+    "id": "r3",
+    "userName": "Alex Karim",
+    "ratings": 5.0,
+    "review": "Excellent service! Fast and secure.",
+    "user_photoURL": "https://placehold.co/100x100/CAEB66/03373D?text=AK",
+    "date": "2025-07-01T08:50:00.000Z"
+  },
+  {
+    "id": "r4",
+    "userName": "Lisa Chowdhury",
+    "ratings": 4.2,
+    "review": "Very responsive and professional.",
+    "user_photoURL": "https://placehold.co/100x100/CAEB66/03373D?text=LC",
+    "date": "2025-07-15T09:10:00.000Z"
+  },
+  {
+    "id": "r5",
+    "userName": "David Islam",
+    "ratings": 2.9,
+    "review": "Late delivery and no updates. Disappointed.",
+    "user_photoURL": "https://placehold.co/100x100/CAEB66/03373D?text=DI",
+    "date": "2025-08-02T16:45:00.000Z"
+  },
+  {
+    "id": "r6",
+    "userName": "Nina Rahman",
+    "ratings": 4.9,
+    "review": "Superb experience! Highly recommended.",
+    "user_photoURL": "https://placehold.co/100x100/CAEB66/03373D?text=NR",
+    "date": "2025-08-10T12:00:00.000Z"
+  }
+]

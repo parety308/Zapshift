@@ -1,0 +1,20 @@
+[
+  { "region": "Dhaka", "district": "Dhaka", "covered_area": ["Uttara", "Dhanmondi", "Mirpur", "Mohammadpur"], "status": "active", "longitude": 90.4125, "latitude": 23.8103 },
+  { "region": "Dhaka", "district": "Gazipur", "covered_area": ["Tongi", "Kaliakair", "Sreepur"], "status": "active", "longitude": 90.4203, "latitude": 23.9999 },
+  { "region": "Dhaka", "district": "Tangail", "covered_area": ["Delduar", "Ghatail", "Kalihati"], "status": "active", "longitude": 89.92, "latitude": 24.25 },
+  { "region": "Chattogram", "district": "Chattogram", "covered_area": ["Pahartali", "Kotwali", "Halishahar", "Agrabad"], "status": "active", "longitude": 91.8123, "latitude": 22.3569 },
+  { "region": "Chattogram", "district": "Cox's Bazar", "covered_area": ["Teknaf", "Ukhia", "Chakaria", "Ramu"], "status": "active", "longitude": 92.0165, "latitude": 21.4272 },
+  { "region": "Chattogram", "district": "Cumilla", "covered_area": ["Laksam", "Debidwar", "Chandina"], "status": "active", "longitude": 91.1809, "latitude": 23.4573 },
+  { "region": "Sylhet", "district": "Sylhet", "covered_area": ["Zindabazar", "Ambarkhana", "South Surma"], "status": "active", "longitude": 91.8662, "latitude": 24.8949 },
+  { "region": "Sylhet", "district": "Moulvibazar", "covered_area": ["Sreemangal", "Kamalganj", "Kulaura"], "status": "active", "longitude": 91.7832, "latitude": 24.4826 },
+  { "region": "Rangpur", "district": "Rangpur", "covered_area": ["Pairaband", "Mahiganj", "Satmatha"], "status": "active", "longitude": 89.2752, "latitude": 25.746 },
+  { "region": "Rangpur", "district": "Dinajpur", "covered_area": ["Birampur", "Fulbari", "Parbatipur"], "status": "active", "longitude": 88.6414, "latitude": 25.6275 },
+  { "region": "Khulna", "district": "Khulna", "covered_area": ["Sonadanga", "Khalishpur", "Daulatpur"], "status": "active", "longitude": 89.5672, "latitude": 22.8456 },
+  { "region": "Khulna", "district": "Jessore", "covered_area": ["Chowgachha", "Bagharpara", "Manirampur"], "status": "active", "longitude": 89.2167, "latitude": 23.17 },
+  { "region": "Rajshahi", "district": "Rajshahi", "covered_area": ["Boalia", "Rajpara", "Motihar"], "status": "active", "longitude": 88.6087, "latitude": 24.3745 },
+  { "region": "Rajshahi", "district": "Bogura", "covered_area": ["Sariakandi", "Sonatola", "Gabtali"], "status": "active", "longitude": 89.37, "latitude": 24.85 },
+  { "region": "Barisal", "district": "Barisal", "covered_area": ["Band Road", "Kawnia", "Rupatali"], "status": "active", "longitude": 90.3667, "latitude": 22.7 },
+  { "region": "Barisal", "district": "Bhola", "covered_area": ["Borhanuddin", "Tazumuddin", "Char Fasson"], "status": "active", "longitude": 90.6311, "latitude": 22.685 },
+  { "region": "Mymensingh", "district": "Mymensingh", "covered_area": ["Trishal", "Muktagachha", "Bhaluka"], "status": "active", "longitude": 90.3987, "latitude": 24.7539 },
+  { "region": "Mymensingh", "district": "Jamalpur", "covered_area": ["Madarganj", "Islampur", "Sarishabari"], "status": "active", "longitude": 89.9333, "latitude": 24.9167 }
+]
