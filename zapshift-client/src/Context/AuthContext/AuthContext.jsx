@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+import { createContext } from "react";
 
-// Holds the shape: { user, loading, login, signup, googleSignIn, logout, forgetPassword }
+// Holds the shape: { user, loading, login, signup, logout, setUser }
 export const AuthContext = createContext(null);

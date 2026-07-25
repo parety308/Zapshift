@@ -1,10 +1,45 @@
 import React from 'react';
-import { Link, Outlet } from 'react-router';
+import { Link, NavLink, Outlet } from 'react-router';
 import Logo from '../../component/Logo/Logo';
+import useAuth from '../../hooks/useAuth/useAuth';
 import { CiDeliveryTruck } from 'react-icons/ci';
-import { MdPayment } from 'react-icons/md';
+import { MdPayment, MdOutlineDashboard, MdOutlineAssignmentInd } from 'react-icons/md';
+import { FaMotorcycle, FaClipboardCheck, FaWallet, FaUsers, FaUserShield, FaBoxes } from 'react-icons/fa';
+
+// Sidebar links per role. Add/remove entries here to change what each
+// role sees — everything else in this layout stays the same.
+const roleLinks = {
+    user: [
+        { to: '/dashboard', end: true, label: 'Overview', icon: <MdOutlineDashboard /> },
+        { to: '/dashboard/my-parcels', label: 'My Parcels', icon: <CiDeliveryTruck /> },
+        { to: '/dashboard/payment-history', label: 'Payment History', icon: <MdPayment /> },
+    ],
+    rider: [
+        { to: '/dashboard', end: true, label: 'Overview', icon: <MdOutlineDashboard /> },
+        { to: '/dashboard/rider/pending-deliveries', label: 'Pending Deliveries', icon: <FaMotorcycle /> },
+        { to: '/dashboard/rider/completed-deliveries', label: 'Completed Deliveries', icon: <FaClipboardCheck /> },
+        { to: '/dashboard/rider/my-earnings', label: 'My Earnings', icon: <FaWallet /> },
+    ],
+    admin: [
+        { to: '/dashboard', end: true, label: 'Overview', icon: <MdOutlineDashboard /> },
+        { to: '/dashboard/admin/all-parcels', label: 'All Parcels', icon: <FaBoxes /> },
+        { to: '/dashboard/admin/manage-riders', label: 'Manage Riders', icon: <FaMotorcycle /> },
+        { to: '/dashboard/admin/assign-rider', label: 'Assign Rider', icon: <MdOutlineAssignmentInd /> },
+        { to: '/dashboard/admin/manage-users', label: 'Manage Users', icon: <FaUsers /> },
+    ],
+};
+
+const roleBadge = {
+    user: 'badge-info',
+    rider: 'badge-warning',
+    admin: 'badge-error',
+};
 
 const DashBoard = () => {
+    const { user } = useAuth();
+    const role = user?.role || 'user';
+    const links = roleLinks[role] || roleLinks.user;
+
     return (
         <div className="drawer lg:drawer-open">
             <input id="my-drawer-4" type="checkbox" className="drawer-toggle" />
@@ -17,7 +52,13 @@ const DashBoard = () => {
                             <path d="M14 10l2 2l-2 2"></path>
                         </svg>
                     </label>
-                    <div className="px-4 flex items-end gap-3"><Logo /><h1 className="text-3xl font-bold">DashBoard</h1></div>
+                    <div className="px-4 flex items-end gap-3">
+                        <Logo />
+                        <h1 className="text-3xl font-bold">DashBoard</h1>
+                        <span className={`badge ${roleBadge[role]} text-white capitalize mb-1`}>
+                            <FaUserShield className="mr-1" /> {role}
+                        </span>
+                    </div>
                 </nav>
                 <Outlet />
             </div>
@@ -35,29 +76,22 @@ const DashBoard = () => {
                                 <span className="is-drawer-close:hidden text-lime-600">Homepage</span>
                             </Link>
                         </li>
-                        <li>
-                            <button className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Settings">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" strokeLinejoin="round" strokeLinecap="round" strokeWidth="2" fill="none" stroke="currentColor" className="my-1.5 inline-block size-4">
-                                    <path d="M20 7h-9"></path>
-                                    <path d="M14 17H5"></path>
-                                    <circle cx="17" cy="17" r="3"></circle>
-                                    <circle cx="7" cy="7" r="3"></circle>
-                                </svg>
-                                <span className="is-drawer-close:hidden">Settings</span>
-                            </button>
-                        </li>
-                        <li>
-                            <Link to="/dashboard/my-parcels" className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="My Parcels">
-                                <CiDeliveryTruck />
-                                <span className="is-drawer-close:hidden text-lime-600">My Parcels</span>
-                            </Link>
-                        </li>
-                        <li>
-                            <Link to="/dashboard/payment-history" className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Payment History">
-                                <MdPayment />
-                                <span className="is-drawer-close:hidden text-lime-600">Payment History</span>
-                            </Link>
-                        </li>
+
+                        <div className="divider my-1 is-drawer-close:hidden"></div>
+
+                        {links.map((link) => (
+                            <li key={link.to}>
+                                <NavLink
+                                    to={link.to}
+                                    end={link.end}
+                                    className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                                    data-tip={link.label}
+                                >
+                                    {link.icon}
+                                    <span className="is-drawer-close:hidden text-lime-600">{link.label}</span>
+                                </NavLink>
+                            </li>
+                        ))}
                     </ul>
                 </div>
             </div>

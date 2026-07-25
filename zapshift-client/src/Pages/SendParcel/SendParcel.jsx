@@ -1,166 +1,146 @@
-import React from 'react';
-import { useForm, useWatch } from 'react-hook-form';
-import { useLoaderData, useNavigate } from 'react-router';
-import Swal from 'sweetalert2';
-import useAxiosSecure from '../../hooks/useAxiosSecure/useAxiosSecure';
-import useAuth from '../../hooks/useAuth/useAuth';
+import React, { useEffect, useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
+import { useNavigate } from "react-router";
+import Swal from "sweetalert2";
+import useAxiosSecure from "../../hooks/useAxiosSecure/useAxiosSecure";
 
+/**
+ * Fields here are intentionally limited to what the Parcel table can
+ * actually store: weight, type, and source/destination region+district.
+ * The schema has no columns for a parcel name or receiver contact details,
+ * so those are not collected (the sender is always the logged-in user,
+ * already tracked via Parcel.user_id -> User).
+ */
 const SendParcel = () => {
-    const { register, handleSubmit, control } = useForm();
-    const navigate = useNavigate();
-    const axiosSecure = useAxiosSecure();
-    const { user } = useAuth();
-    const serviceCenters = useLoaderData();
-
-    const uniqueRegions = [...new Set(serviceCenters.map((c) => c.region))];
-    const senderRegion = useWatch({ control, name: 'senderRegion' });
-    const receiverRegion = useWatch({ control, name: 'receiverRegion' });
-
-    const districtsByRegion = (region) =>
-        serviceCenters.filter((s) => s.region === region).map((d) => d.district);
-
-    const handleSendParcel = (data) => {
-        const isSameDistrict = data.senderDistrict === data.receiverDistrict;
-        const isDocument = data.parcelType === 'document';
-        const parcelWeight = parseFloat(data.parcelWeight) || 0;
-        let cost = 0;
-
-        if (isDocument) {
-            cost = isSameDistrict ? 60 : 80;
-        } else if (parcelWeight <= 3) {
-            cost = isSameDistrict ? 110 : 150;
-        } else {
-            const minCost = isSameDistrict ? 110 : 150;
-            const extraWeight = Math.ceil(parcelWeight - 3);
-            const extraCost = isSameDistrict ? extraWeight * 40 : extraWeight * 40 + 40;
-            cost = minCost + extraCost;
-        }
-        data.cost = cost;
-
+  const { register, handleSubmit, control, formState: { errors } } = useForm();
+  const navigate = useNavigate();
+  const axiosSecure = useAxiosSecure();
+  const [serviceCenters, setServiceCenters] = useState([]);
+  useEffect(() => {
+    const fetchRegions = async () => {
+      try {
+        const res = await axiosSecure.get("/regions");
+        setServiceCenters(res.data.data);
+      } catch (error) {
+        console.error(error);
         Swal.fire({
-            title: 'Agree with the Cost?',
-            text: `You will be charged ${cost} taka`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, take it!',
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // POST to your backend — see the "API Integration Hints" section
-                // of the setup guide for the expected request/response shape.
-                axiosSecure.post('/parcels', data).catch((err) => console.log(err));
-
-                Swal.fire({
-                    title: 'Accepted!',
-                    text: 'Your parcel has been taken for delivery, please pay.',
-                    icon: 'success',
-                });
-                navigate('/dashboard/my-parcels');
-            }
+          icon: "error",
+          title: "Failed to load regions",
         });
+      }
     };
 
-    return (
-        <div className="w-11/12 mx-auto">
-            <h1 className="text-4xl font-bold my-10">Send A Parcel</h1>
+    fetchRegions();
+  }, [axiosSecure]);
+  const uniqueRegions = [
+    ...new Set(serviceCenters.map((c) => c.division)),
+  ];
+  const senderRegion = useWatch({ control, name: "senderRegion" });
+  const receiverRegion = useWatch({ control, name: "receiverRegion" });
 
-            <form className="my-10 p-4 border" onSubmit={handleSubmit(handleSendParcel)}>
-                <div className="flex gap-5 mb-4">
-                    <label className="label gap-2">
-                        <input type="radio" {...register('parcelType')} value="document" className="radio" defaultChecked />
-                        Document
-                    </label>
-                    <label className="label gap-2">
-                        <input type="radio" {...register('parcelType')} value="non-document" className="radio" />
-                        Non-Document
-                    </label>
-                </div>
+  const districtsByRegion = (division) =>
+    serviceCenters
+      .filter((s) => s.division === division)
+      .map((d) => d.district);
 
-                <div className="lg:flex md:flex gap-5">
-                    <fieldset className="my-1 w-full lg:w-1/2">
-                        <label className="label text-black">Parcel Name</label><br />
-                        <input type="text" {...register('parcelName')} placeholder="Type here" className="input w-full" />
-                    </fieldset>
-                    <fieldset className="my-1 w-full lg:w-1/2">
-                        <label className="label text-black">Parcel Weight (kg)</label><br />
-                        <input type="text" {...register('parcelWeight')} placeholder="Type here" className="input w-full" />
-                    </fieldset>
-                </div>
+  const handleSendParcel = async (data) => {
+    try {
+      const payload = {
+        weight: parseFloat(data.parcelWeight),
+        parcelType: data.parcelType,
+        senderRegion: data.senderRegion,
+        senderDistrict: data.senderDistrict,
+        receiverRegion: data.receiverRegion,
+        receiverDistrict: data.receiverDistrict,
+      };
 
-                <div className="grid lg:grid-cols-2 grid-cols-1 my-10 gap-4">
-                    <div>
-                        <h1 className="text-3xl font-semibold">Sender Details</h1>
-                        <fieldset className="my-1 w-full lg:w-1/2">
-                            <label className="label text-black">Sender Name</label><br />
-                            <input type="text" {...register('senderName')} placeholder="Type here" className="input w-full" defaultValue={user?.displayName} />
-                        </fieldset>
-                        <fieldset className="my-1 w-full lg:w-1/2">
-                            <label className="label text-black">Sender Email</label>
-                            <input defaultValue={user?.email} type="email" {...register('senderEmail')} placeholder="Type here" className="input w-full" />
-                        </fieldset>
-                        <fieldset className="fieldset">
-                            <legend className="fieldset-legend">Sender Region</legend>
-                            <select {...register('senderRegion')} defaultValue="Pick a region" className="select">
-                                <option disabled>Pick a region</option>
-                                {uniqueRegions.map((r, i) => <option key={i}>{r}</option>)}
-                            </select>
-                        </fieldset>
-                        <fieldset className="fieldset">
-                            <legend className="fieldset-legend">Sender District</legend>
-                            <select {...register('senderDistrict')} defaultValue="Pick a District" className="select">
-                                <option disabled>Pick a District</option>
-                                {districtsByRegion(senderRegion).map((r, i) => <option key={i}>{r}</option>)}
-                            </select>
-                        </fieldset>
-                        <fieldset className="my-1 w-full lg:w-1/2">
-                            <label className="label text-black">Address</label><br />
-                            <input type="text" {...register('senderAddress')} placeholder="Type here" className="input w-full" />
-                        </fieldset>
-                        <fieldset className="my-1 w-full lg:w-1/2">
-                            <label className="label text-black">Sender Phone No</label><br />
-                            <input type="text" {...register('senderPhone')} placeholder="Type here" className="input w-full" />
-                        </fieldset>
-                    </div>
+      const res = await axiosSecure.post("/parcels", payload);
+      const parcel = res.data.data;
 
-                    <div>
-                        <h1 className="text-3xl font-semibold">Receiver Details</h1>
-                        <fieldset className="my-1 w-full lg:w-1/2">
-                            <label className="label text-black">Receiver Name</label><br />
-                            <input type="text" {...register('receiverName')} placeholder="Type here" className="input w-full" />
-                        </fieldset>
-                        <fieldset className="my-1 w-full lg:w-1/2">
-                            <label className="label text-black">Receiver Email</label>
-                            <input type="email" {...register('receiverEmail')} placeholder="Type here" className="input w-full" />
-                        </fieldset>
-                        <fieldset className="fieldset">
-                            <legend className="fieldset-legend">Receiver Region</legend>
-                            <select {...register('receiverRegion')} defaultValue="Pick a region" className="select">
-                                <option disabled>Pick a region</option>
-                                {uniqueRegions.map((r, i) => <option key={i}>{r}</option>)}
-                            </select>
-                        </fieldset>
-                        <fieldset className="fieldset">
-                            <legend className="fieldset-legend">Receiver District</legend>
-                            <select {...register('receiverDistrict')} defaultValue="Pick a District" className="select">
-                                <option disabled>Pick a District</option>
-                                {districtsByRegion(receiverRegion).map((r, i) => <option key={i}>{r}</option>)}
-                            </select>
-                        </fieldset>
-                        <fieldset className="my-1 w-full lg:w-1/2">
-                            <label className="label text-black">Address</label><br />
-                            <input type="text" {...register('receiverAddress')} placeholder="Type here" className="input w-full" />
-                        </fieldset>
-                        <fieldset className="my-1 w-full lg:w-1/2">
-                            <label className="label text-black">Receiver Phone No</label><br />
-                            <input type="text" {...register('receiverPhone')} placeholder="Type here" className="input w-full" />
-                        </fieldset>
-                    </div>
-                </div>
-                <input type="submit" className="btn bg-lime-300 mt-5" value="Send Parcel" />
-            </form>
+      await Swal.fire({
+        title: "Parcel Booked!",
+        text: `Estimated cost: ${parcel.cost} taka. You can pay any time from My Parcels.`,
+        icon: "success",
+      });
+      navigate("/dashboard/my-parcels");
+    } catch (error) {
+      const message = error?.response?.data?.message || "Could not book this parcel";
+      Swal.fire({ icon: "error", title: "Booking failed", text: message });
+    }
+  };
+
+  return (
+    <div className="w-11/12 mx-auto">
+      <h1 className="text-4xl font-bold my-10">Send A Parcel</h1>
+
+      <form className="my-10 p-4 border" onSubmit={handleSubmit(handleSendParcel)}>
+        <div className="flex gap-5 mb-4">
+          <label className="label gap-2">
+            <input type="radio" {...register("parcelType")} value="document" className="radio" defaultChecked />
+            Document
+          </label>
+          <label className="label gap-2">
+            <input type="radio" {...register("parcelType")} value="non-document" className="radio" />
+            Non-Document
+          </label>
         </div>
-    );
+
+        <fieldset className="my-1 w-full lg:w-1/3">
+          <label className="label text-black">Parcel Weight (kg)</label>
+          <br />
+          <input
+            type="number"
+            step="0.01"
+            {...register("parcelWeight", { required: true, min: 0.01 })}
+            placeholder="e.g. 2.5"
+            className="input w-full"
+          />
+          {errors.parcelWeight && <p className="text-red-500">A valid weight is required</p>}
+        </fieldset>
+
+        <div className="grid lg:grid-cols-2 grid-cols-1 my-10 gap-4">
+          <div>
+            <h1 className="text-3xl font-semibold">Sender Details</h1>
+            <p className="text-sm text-gray-500 mb-2">Sender is your logged-in account.</p>
+            <fieldset className="fieldset">
+              <legend className="fieldset-legend">Sender Region</legend>
+              <select {...register("senderRegion", { required: true })} defaultValue="" className="select">
+                <option value="" disabled>Pick a region</option>
+                {uniqueRegions.map((r, i) => <option key={i} value={r}>{r}</option>)}
+              </select>
+            </fieldset>
+            <fieldset className="fieldset">
+              <legend className="fieldset-legend">Sender District</legend>
+              <select {...register("senderDistrict", { required: true })} defaultValue="" className="select">
+                <option value="" disabled>Pick a District</option>
+                {districtsByRegion(senderRegion).map((r, i) => <option key={i} value={r}>{r}</option>)}
+              </select>
+            </fieldset>
+          </div>
+
+          <div>
+            <h1 className="text-3xl font-semibold">Receiver Details</h1>
+            <p className="text-sm text-gray-500 mb-2">Where the parcel is headed.</p>
+            <fieldset className="fieldset">
+              <legend className="fieldset-legend">Receiver Region</legend>
+              <select {...register("receiverRegion", { required: true })} defaultValue="" className="select">
+                <option value="" disabled>Pick a region</option>
+                {uniqueRegions.map((r, i) => <option key={i} value={r}>{r}</option>)}
+              </select>
+            </fieldset>
+            <fieldset className="fieldset">
+              <legend className="fieldset-legend">Receiver District</legend>
+              <select {...register("receiverDistrict", { required: true })} defaultValue="" className="select">
+                <option value="" disabled>Pick a District</option>
+                {districtsByRegion(receiverRegion).map((r, i) => <option key={i} value={r}>{r}</option>)}
+              </select>
+            </fieldset>
+          </div>
+        </div>
+        <input type="submit" className="btn bg-lime-300 mt-5" value="Send Parcel" />
+      </form>
+    </div>
+  );
 };
 
 export default SendParcel;

@@ -8,13 +8,7 @@
     "dev": "nodemon src/server.js",
     "start": "node src/server.js"
   },
-  "keywords": [
-    "nodejs",
-    "express",
-    "mysql",
-    "jwt",
-    "stripe"
-  ],
+  "keywords": ["nodejs", "express", "mysql", "jwt", "stripe"],
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -23,29 +17,19 @@
     "compression": "^1.8.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
-    "dayjs": "^1.11.21",
-    "debug": "^4.4.3",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "express-async-handler": "^1.2.0",
     "express-rate-limit": "^8.6.0",
     "helmet": "^8.3.0",
     "http-errors": "^2.0.1",
     "http-status-codes": "^2.3.0",
     "jsonwebtoken": "^9.0.3",
     "morgan": "^1.11.0",
-    "multer": "^2.2.0",
     "mysql2": "^3.23.0",
-    "nodemailer": "^9.0.3",
     "stripe": "^22.3.2",
-    "uuid": "^14.0.1",
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "eslint": "^9.39.5",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-import": "^2.32.0",
-    "nodemon": "^3.1.14",
-    "prettier": "^3.9.5"
+    "nodemon": "^3.1.14"
   }
 }

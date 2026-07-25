@@ -1,0 +1,26 @@
+{
+  "parcel-created": {
+    "title": "Parcel Created",
+    "message": "📝 Your parcel has been successfully created in the system."
+  },
+  "pending-pickup": {
+    "title": "Waiting for Pickup",
+    "message": "📦 Your parcel is ready and waiting for courier pickup."
+  },
+  "picked-up": {
+    "title": "Picked Up",
+    "message": "🚚 Parcel has been picked up by the courier."
+  },
+  "in-transit": {
+    "title": "In Transit",
+    "message": "🛣️ Your parcel is on the way to the destination."
+  },
+  "out-for-delivery": {
+    "title": "Out for Delivery",
+    "message": "📍 Courier is on the way to deliver your parcel."
+  },
+  "delivered": {
+    "title": "Delivered",
+    "message": "✅ Parcel delivered successfully. Thank you!"
+  }
+}

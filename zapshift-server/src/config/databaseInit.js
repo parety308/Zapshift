@@ -1,8 +1,15 @@
 import { pool } from "./db.js";
 
+/**
+ * SCHEMA SOURCE OF TRUTH
+ * -----------------------
+ * This mirrors the normalized schema exactly as provided (Region, Admin, User,
+ * Rider, Pricing_rule, Parcel, Payment). Do NOT add/remove columns here —
+ * every other part of the backend adapts to this shape, not the other way
+ * around.
+ */
 export const initializeDatabase = async () => {
   try {
-
     // Region
     await pool.query(`
       CREATE TABLE IF NOT EXISTS Region (
@@ -11,7 +18,6 @@ export const initializeDatabase = async () => {
         district VARCHAR(50) NOT NULL
       )
     `);
-
 
     // Admin
     await pool.query(`
@@ -22,7 +28,6 @@ export const initializeDatabase = async () => {
       )
     `);
 
-
     // User
     await pool.query(`
       CREATE TABLE IF NOT EXISTS User (
@@ -32,7 +37,6 @@ export const initializeDatabase = async () => {
         password VARCHAR(255) NOT NULL
       )
     `);
-
 
     // Rider
     await pool.query(`
@@ -50,7 +54,6 @@ export const initializeDatabase = async () => {
       )
     `);
 
-
     // Pricing Rule
     await pool.query(`
       CREATE TABLE IF NOT EXISTS Pricing_rule (
@@ -62,7 +65,6 @@ export const initializeDatabase = async () => {
         CHECK(max_weight >= min_weight)
       )
     `);
-
 
     // Parcel
     await pool.query(`
@@ -85,7 +87,6 @@ export const initializeDatabase = async () => {
       )
     `);
 
-
     // Payment
     await pool.query(`
       CREATE TABLE IF NOT EXISTS Payment (
@@ -100,14 +101,10 @@ export const initializeDatabase = async () => {
       )
     `);
 
-
     console.log("Database tables checked successfully");
-
-  } catch(error) {
-
+  } catch (error) {
     console.error("Database initialization failed");
     console.error(error.message);
-
     process.exit(1);
   }
 };
