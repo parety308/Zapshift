@@ -16,8 +16,27 @@ const createParcelSchema = z.object({
 const router = Router();
 
 router.post("/", protect, validate(createParcelSchema), parcelController.create);
+
 router.get("/", protect, parcelController.listMine);
+
+// Admin only
+router.get("/all", protect, parcelController.getAll);
+
+router.get(
+  "/unassigned",
+  protect,
+  parcelController.getUnassignedParcels
+);
+
 router.get("/:id", protect, parcelController.getOne);
+
+
+router.patch(
+  "/:id/assign",
+  protect,
+  parcelController.assignRider
+);
+
 router.delete("/:id", protect, parcelController.remove);
 
 export const parcelRouter = router;

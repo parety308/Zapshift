@@ -56,7 +56,7 @@ app.use("/api/users", userRouter);
 app.use("/api/regions", regionRouter);
 app.use("/api/pricing", pricingRouter);
 app.use("/api/riders", riderRouter);
-app.use("/api/parcels", parcelRouter);
+app.use("/api/parcel", parcelRouter);
 app.use("/api/payments", paymentRouter);
 
 app.use(notFoundMiddleware);

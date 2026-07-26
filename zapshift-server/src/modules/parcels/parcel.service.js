@@ -51,6 +51,15 @@ const createParcel = async (user_id, payload) => {
   return getParcelById(parcel_id);
 };
 
+const getAllParcels = async () => {
+  const [rows] = await pool.query(`
+    ${PARCEL_SELECT}
+    ORDER BY p.parcel_id DESC
+  `);
+
+  return rows.map(mapParcelRow);
+};
+
 const getParcelById = async (parcel_id) => {
   const [rows] = await pool.query(`${PARCEL_SELECT} WHERE p.parcel_id = ?`, [parcel_id]);
   if (rows.length === 0) throw createHttpError(404, "Parcel not found");
@@ -61,6 +70,81 @@ const listParcelsForUser = async (user_id) => {
   const [rows] = await pool.query(`${PARCEL_SELECT} WHERE p.user_id = ? ORDER BY p.parcel_id DESC`, [user_id]);
   return rows.map(mapParcelRow);
 };
+
+const getUnassignedParcels = async () => {
+
+  const [rows] = await pool.query(
+    `
+    SELECT 
+        p.parcel_id,
+        p.parcel_type,
+        p.weight,
+        p.parcel_status,
+
+        pr.delivery_price AS cost,
+
+        src.division AS sender_region,
+        src.district AS sender_district,
+
+        dst.division AS receiver_region,
+        dst.district AS receiver_district
+
+    FROM Parcel p
+
+    JOIN Region src
+        ON p.parcel_source = src.region_id
+
+    JOIN Region dst
+        ON p.parcel_destination = dst.region_id
+
+    JOIN Pricing_rule pr
+        ON p.pricing_id = pr.pricing_id
+
+    WHERE p.rider_id IS NULL
+
+    ORDER BY p.parcel_id DESC
+    `
+  );
+
+  return rows;
+
+};
+
+
+
+
+const assignRider = async (parcel_id, rider_id) => {
+
+
+  await pool.query(
+    `
+        UPDATE Parcel
+
+        SET rider_id=?
+
+        WHERE parcel_id=?
+        `,
+    [
+      rider_id,
+      parcel_id
+    ]
+  );
+
+
+  const [rows] = await pool.query(
+    `
+        SELECT *
+        FROM Parcel
+        WHERE parcel_id=?
+        `,
+    [parcel_id]
+  );
+
+
+  return rows[0];
+
+};
+
 
 const deleteParcel = async (parcel_id, user_id) => {
   const [rows] = await pool.query("SELECT user_id, parcel_status FROM Parcel WHERE parcel_id = ?", [parcel_id]);
@@ -75,4 +159,7 @@ const deleteParcel = async (parcel_id, user_id) => {
   await pool.query("DELETE FROM Parcel WHERE parcel_id = ?", [parcel_id]);
 };
 
-export const parcelService = { createParcel, getParcelById, listParcelsForUser, deleteParcel, mapParcelRow, PARCEL_SELECT };
+export const parcelService = {
+  createParcel, getAllParcels, getParcelById, listParcelsForUser, getUnassignedParcels,
+  assignRider, deleteParcel, mapParcelRow, PARCEL_SELECT
+};

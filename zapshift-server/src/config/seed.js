@@ -11,21 +11,78 @@ import bcrypt from "bcryptjs";
 // Same division/district pairs used by the client's coverage map, kept in
 // sync manually since Region has no lat/long columns (those stay static
 // on the client for the map UI only).
+
 const REGIONS = [
-  ["Dhaka", "Dhaka"], ["Dhaka", "Gazipur"], ["Dhaka", "Tangail"],
-  ["Chattogram", "Chattogram"], ["Chattogram", "Cox's Bazar"], ["Chattogram", "Cumilla"],
-  ["Sylhet", "Sylhet"], ["Sylhet", "Moulvibazar"],
-  ["Rangpur", "Rangpur"], ["Rangpur", "Dinajpur"],
-  ["Khulna", "Khulna"], ["Khulna", "Jessore"],
-  ["Rajshahi", "Rajshahi"], ["Rajshahi", "Bogura"],
-  ["Barisal", "Barisal"], ["Barisal", "Bhola"],
-  ["Mymensingh", "Mymensingh"], ["Mymensingh", "Jamalpur"],
+  ["Dhaka", "Dhaka"],
+  ["Dhaka", "Faridpur"],
+  ["Dhaka", "Gazipur"],
+  ["Dhaka", "Gopalganj"],
+  ["Dhaka", "Kishoreganj"],
+  ["Dhaka", "Madaripur"],
+  ["Dhaka", "Manikganj"],
+  ["Dhaka", "Munshiganj"],
+  ["Dhaka", "Narayanganj"],
+  ["Dhaka", "Narsingdi"],
+  ["Dhaka", "Rajbari"],
+  ["Dhaka", "Shariatpur"],
+  ["Dhaka", "Tangail"],
+  ["Chattogram", "Chattogram"],
+  ["Chattogram", "Cox's Bazar"],
+  ["Chattogram", "Cumilla"],
+  ["Chattogram", "Brahmanbaria"],
+  ["Chattogram", "Chandpur"],
+  ["Chattogram", "Feni"],
+  ["Chattogram", "Khagrachari"],
+  ["Chattogram", "Lakshmipur"],
+  ["Chattogram", "Noakhali"],
+  ["Chattogram", "Rangamati"],
+  ["Chattogram", "Bandarban"],
+  ["Sylhet", "Sylhet"],
+  ["Sylhet", "Moulvibazar"],
+  ["Sylhet", "Habiganj"],
+  ["Sylhet", "Sunamganj"],
+  ["Rangpur", "Rangpur"],
+  ["Rangpur", "Dinajpur"],
+  ["Rangpur", "Thakurgaon"],
+  ["Rangpur", "Panchagarh"],
+  ["Rangpur", "Nilphamari"],
+  ["Rangpur", "Lalmonirhat"],
+  ["Rangpur", "Kurigram"],
+  ["Rangpur", "Gaibandha"],
+  ["Khulna", "Khulna"],
+  ["Khulna", "Jessore"],
+  ["Khulna", "Satkhira"],
+  ["Khulna", "Bagerhat"],
+  ["Khulna", "Magura"],
+  ["Khulna", "Narail"],
+  ["Khulna", "Jhenaidah"],
+  ["Khulna", "Chuadanga"],
+  ["Khulna", "Meherpur"],
+  ["Khulna", "Kushtia"],
+  ["Rajshahi", "Rajshahi"],
+  ["Rajshahi", "Natore"],
+  ["Rajshahi", "Naogaon"],
+  ["Rajshahi", "Chapainawabganj"],
+  ["Rajshahi", "Pabna"],
+  ["Rajshahi", "Sirajganj"],
+  ["Rajshahi", "Joypurhat"],
+  ["Rajshahi", "Bogura"],
+  ["Barishal", "Barishal"],
+  ["Barishal", "Bhola"],
+  ["Barishal", "Patuakhali"],
+  ["Barishal", "Pirojpur"],
+  ["Barishal", "Barguna"],
+  ["Barishal", "Jhalokati"],
+  ["Mymensingh", "Mymensingh"],
+  ["Mymensingh", "Netrokona"],
+  ["Mymensingh", "Jamalpur"],
+  ["Mymensingh", "Sherpur"]
 ];
 
 const PRICING_RULES = [
-  { min: 1, max: 5, price: 250 },
-  { min: 6, max: 10, price: 300 },
-  { min: 11, max: 15, price: 350 },
+  { min: 1, max: 5, price: 50 },
+  { min: 6, max: 10, price: 70 },
+  { min: 11, max: 15, price: 100 },
 ];
 
 const nextId = async (table, idColumn, prefix, pad = 3) => {
@@ -52,15 +109,44 @@ export const seedDatabase = async () => {
   }
 
   // Default Admin (needed so Riders have a valid admin_id to attach to)
-  const [adminRows] = await pool.query("SELECT COUNT(*) as count FROM Admin");
-  if (adminRows[0].count === 0) {
+  const [adminRows] = await pool.query(
+    "SELECT COUNT(*) as count FROM Admin"
+  );
+  const hashedPassword = await bcrypt.hash("Admin@123", 10);
+
+  if (Number(adminRows[0].count) === 0) {
+    // First create user
     await pool.query(
-      "INSERT INTO Admin (admin_id, full_name, email) VALUES (?, ?, ?)",
-      ["AD001", "Default Admin", "admin@zapshift.com"]
+      `
+  INSERT INTO User
+  (user_id, full_name, email, password, role)
+  VALUES (?, ?, ?, ?, ?)
+  `,
+      [
+        "U001",
+        "Parvez",
+        "parvez@example.com",
+        hashedPassword,
+        "admin"
+      ]
     );
+
+
+    // Then create admin reference
+    await pool.query(
+      `
+  INSERT INTO Admin
+  (admin_id, user_id)
+  VALUES (?, ?)
+  `,
+      [
+        "AD001",
+        "U001"
+      ]
+    );
+
     console.log("Seeded default admin");
   }
-
   // Pricing rules
   const [pricingRows] = await pool.query("SELECT COUNT(*) as count FROM Pricing_rule");
   if (pricingRows[0].count === 0) {
