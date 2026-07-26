@@ -11,10 +11,12 @@ import RoleRoute from './RoleRoute';
 import SendParcel from '../Pages/SendParcel/SendParcel';
 import DashBoard from '../Pages/DashBoard/DashBoard';
 import DashboardHome from '../Pages/DashBoard/DashboardHome';
-import Myparcels from '../component/MyParcels/Myparcels';
-import PaymentPage from '../Pages/PaymentPage/PaymentPage';
-import PaymentSuccessPage from '../Pages/PaymentSuccessPage/PaymentSuccessPage';
-import PaymentHistory from '../Pages/PaymentHistory/PaymentHistory';
+
+// User Dashboard Pages
+import PaymentHistory from '../Pages/DashBoard/user/PaymentHistory/PaymentHistory';
+import PaymentPage from '../Pages/DashBoard/user/PaymentPage/PaymentPage';
+import PaymentSuccessPage from '../Pages/DashBoard/user/PaymentSuccessPage/PaymentSuccessPage';
+import Myparcels from '../Pages/DashBoard/user/MyParcels/Myparcels';
 
 // Rider dashboard pages
 import PendingDeliveries from '../Pages/DashBoard/Rider/PendingDeliveries';
@@ -27,6 +29,7 @@ import AllParcels from '../Pages/DashBoard/Admin/AllParcels';
 import ManageRiders from '../Pages/DashBoard/Admin/ManageRiders';
 import AssignRider from '../Pages/DashBoard/Admin/AssignRider';
 import ManageUsers from '../Pages/DashBoard/Admin/ManageUsers';
+
 
 export const router = createBrowserRouter([
     {

@@ -1,16 +1,17 @@
 import React from "react";
-import useAxiosSecure from "../../hooks/useAxiosSecure/useAxiosSecure";
+
 import { useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
+import axiosInstance from "../../../../service/axiosInstance";
 
 const PaymentPage = () => {
-  const axiosSecure = useAxiosSecure();
+ 
   const { parcelId } = useParams();
 
   const { isLoading, data: parcel } = useQuery({
     queryKey: ["parcels", parcelId],
     queryFn: async () => {
-      const res = await axiosSecure.get(`/parcels/${parcelId}`);
+      const res = await axiosInstance.get(`/parcels/${parcelId}`);
       return res.data.data;
     },
   });
@@ -20,7 +21,7 @@ const PaymentPage = () => {
   }
 
   const handlePayment = async () => {
-    const res = await axiosSecure.post("/payments/create-checkout-session", { parcelId });
+    const res = await axiosInstance.post("/payments/create-checkout-session", { parcelId });
     window.location.href = res.data.data.url;
   };
 

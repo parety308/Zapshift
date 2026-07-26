@@ -1,13 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
-import useAxiosSecure from "../../hooks/useAxiosSecure/useAxiosSecure";
+import axiosInstance from "../../../../service/axiosInstance";
+
 
 const PaymentHistory = () => {
-  const axiosSecure = useAxiosSecure();
+
 
   const { data: payments = [] } = useQuery({
     queryKey: ["payments"],
     queryFn: async () => {
-      const res = await axiosSecure.get("/payments");
+      const res = await axiosInstance.get("/payments");
       return res.data.data;
     },
   });

@@ -16,7 +16,7 @@ const Coverage = () => {
     );
 
     if (district && mapRef.current) {
-      mapRef.current.flyTo([district.latitude, district.longitude], 10);
+      mapRef.current.flyTo([district.latitude, district.longitude], 11);
     }
   };
 
@@ -39,7 +39,7 @@ const Coverage = () => {
         </form>
       </div>
       <div className="w-11/12 mx-auto h-[500px] md:h-[650px] border rounded-lg overflow-hidden">
-        <MapContainer center={position} zoom={7} scrollWheelZoom={false} className="h-full w-full" ref={mapRef}>
+        <MapContainer center={position} zoom={8} scrollWheelZoom={false} className="h-full w-full" ref={mapRef}>
           <TileLayer
             attribution="&copy; OpenStreetMap contributors"
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

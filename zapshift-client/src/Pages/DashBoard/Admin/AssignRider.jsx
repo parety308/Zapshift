@@ -1,31 +1,69 @@
-import React, { useState } from 'react';
-import Swal from 'sweetalert2';
+import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
+import { assignParcel, getUnassignedParcels } from "../../../service/parcelService";
+import { getActiveRiders } from "../../../service/riderService";
 
 // Replace with real fetches, e.g. GET /admin/parcels?assigned=false and GET /admin/riders?status=active
-const MOCK_UNASSIGNED_PARCELS = [
-    { _id: 'p10', parcelName: 'Furniture Part', region: 'Dhaka', cost: 300 },
-    { _id: 'p11', parcelName: 'Medicine Box', region: 'Khulna', cost: 120 },
-];
-const MOCK_ACTIVE_RIDERS = [
-    { _id: 'r2', name: 'Shakil Rana', region: 'Chattogram' },
-    { _id: 'r3', name: 'Imran Kabir', region: 'Sylhet' },
-    { _id: 'r4', name: 'Momtaz Uddin', region: 'Dhaka' },
-];
+
 
 const AssignRider = () => {
-    const [parcels, setParcels] = useState(MOCK_UNASSIGNED_PARCELS);
-    const [selectedRider, setSelectedRider] = useState({});
+    const [parcels, setParcels] = useState([]);
 
-    const handleAssign = (parcelId) => {
+    const [riders, setRiders] = useState([]);
+    const [selectedRider, setSelectedRider] = useState({});
+    useEffect(() => {
+
+        const loadData = async () => {
+
+            const parcelData = await getUnassignedParcels();
+
+            const riderData = await getActiveRiders();
+
+
+            setParcels(parcelData);
+
+            setRiders(riderData);
+
+        };
+
+
+        loadData();
+
+    }, []);
+    const handleAssign = async (parcelId) => {
+
         const riderId = selectedRider[parcelId];
+
+
         if (!riderId) {
-            Swal.fire({ icon: 'warning', title: 'Pick a rider first', timer: 1200, showConfirmButton: false });
+            Swal.fire({
+                icon: "warning",
+                title: "Pick a rider first"
+            });
             return;
         }
-        // Hook this up to your backend, e.g.
-        // axiosSecure.patch(`/admin/parcels/${parcelId}/assign`, { riderId })
-        setParcels((prev) => prev.filter((p) => p._id !== parcelId));
-        Swal.fire({ icon: 'success', title: 'Rider assigned', timer: 1200, showConfirmButton: false });
+
+
+        await assignParcel(
+            parcelId,
+            riderId
+        );
+
+
+        setParcels(prev =>
+            prev.filter(
+                p => p.parcel_id !== parcelId
+            )
+        );
+
+
+        Swal.fire({
+            icon: "success",
+            title: "Rider assigned",
+            timer: 1200,
+            showConfirmButton: false
+        });
+
     };
 
     return (
@@ -46,26 +84,46 @@ const AssignRider = () => {
                     </thead>
                     <tbody>
                         {parcels.map((p) => (
-                            <tr key={p._id}>
-                                <td className="text-center">{p.parcelName}</td>
-                                <td className="text-center">{p.region}</td>
+                            <tr key={p.parcel_id}>
+                                <td className="text-center">{p.parcel_name}</td>
+
+                                <td className="text-center">{p.division}</td>
+
                                 <td className="text-center">৳{p.cost}</td>
+
                                 <td className="text-center">
                                     <select
                                         className="select select-sm"
                                         defaultValue=""
                                         onChange={(e) =>
-                                            setSelectedRider((prev) => ({ ...prev, [p._id]: e.target.value }))
+                                            setSelectedRider((prev) => ({
+                                                ...prev,
+                                                [p.parcel_id]: e.target.value
+                                            }))
                                         }
                                     >
-                                        <option value="" disabled>Pick a rider</option>
-                                        {MOCK_ACTIVE_RIDERS.map((r) => (
-                                            <option key={r._id} value={r._id}>{r.name} ({r.region})</option>
+                                        <option value="" disabled>
+                                            Pick a rider
+                                        </option>
+
+                                        {riders.map((r) => (
+                                            <option
+                                                key={r.rider_id}
+                                                value={r.rider_id}
+                                            >
+                                                {r.full_name} ({r.division})
+                                            </option>
                                         ))}
                                     </select>
                                 </td>
+
                                 <td className="text-center">
-                                    <button onClick={() => handleAssign(p._id)} className="btn btn-sm bg-lime-300">Assign</button>
+                                    <button
+                                        onClick={() => handleAssign(p.parcel_id)}
+                                        className="btn btn-sm bg-lime-300"
+                                    >
+                                        Assign
+                                    </button>
                                 </td>
                             </tr>
                         ))}
