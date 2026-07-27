@@ -2,11 +2,11 @@ import React from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useLoaderData, useNavigate } from "react-router";
 import Swal from "sweetalert2";
-import useAxiosSecure from "../../hooks/useAxiosSecure/useAxiosSecure";
+import { applyAsRider } from "../../service/riderService";
 
 const Rider = () => {
   const { register, handleSubmit, control, formState: { errors } } = useForm();
-  const axiosSecure = useAxiosSecure();
+
   const navigate = useNavigate();
   const serviceCenters = useLoaderData();
 
@@ -16,18 +16,33 @@ const Rider = () => {
 
   const onSubmit = async (data) => {
     try {
-      await axiosSecure.post("/riders/apply", {
-        vehicleType: data.vehicleType,
-        division: data.region,
-        district: data.district,
-      });
-      Swal.fire({ icon: "success", title: "Application submitted!", text: "We will reach out with next steps." });
-      navigate("/");
-    } catch (error) {
-      const message = error?.response?.data?.message || "Could not submit your application";
-      Swal.fire({ icon: "error", title: "Application failed", text: message });
+
+        await applyAsRider({
+            vehicleType: data.vehicleType,
+            division: data.region,
+            district: data.district
+        });
+
+        Swal.fire({
+            icon: "success",
+            title: "Application Submitted",
+            text: "Your rider application has been submitted."
+        });
+
+        navigate("/");
+
+    } catch (err) {
+
+        Swal.fire({
+            icon: "error",
+            title: "Application Failed",
+            text:
+                err.response?.data?.message ||
+                "Something went wrong"
+        });
+
     }
-  };
+};
 
   return (
     <div className="w-10/12 mx-auto">

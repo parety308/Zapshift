@@ -69,7 +69,6 @@ const MyEarnings = () => {
           <thead>
             <tr>
               <th className="text-center">Parcel ID</th>
-              <th className="text-center">Date</th>
               <th className="text-center">Amount</th>
             </tr>
           </thead>
@@ -78,9 +77,6 @@ const MyEarnings = () => {
             {earnings?.history?.map((item) => (
               <tr key={item.parcel_id}>
                 <td className="text-center">{item.parcel_id}</td>
-                <td className="text-center">
-                  {new Date(item.delivered_at).toLocaleDateString()}
-                </td>
                 <td className="text-center">
                   ৳{item.amount}
                 </td>

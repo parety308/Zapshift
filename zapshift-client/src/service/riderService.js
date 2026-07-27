@@ -1,14 +1,17 @@
 import axiosInstance from "./axiosInstance";
 
 
+export const getMyRiderProfile = async () => {
+    const response = await axiosInstance.get("/riders/me");
+    return response.data.data;
+};
+
 export const getAllRiders = async () => {
 
     const response = await axiosInstance.get("/riders");
 
     return response.data.data;
 };
-
-
 
 export const approveRider = async (id) => {
 
@@ -85,6 +88,15 @@ export const getMyPendingDeliveries = async () => {
 export const markDelivered = async (parcelId) => {
     const response = await axiosInstance.patch(
         `/riders/parcels/${parcelId}/deliver`
+    );
+
+    return response.data.data;
+};
+
+export const applyAsRider = async (data) => {
+    const response = await axiosInstance.post(
+        "/riders/apply",
+        data
     );
 
     return response.data.data;

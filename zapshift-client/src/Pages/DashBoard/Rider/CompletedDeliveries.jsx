@@ -45,7 +45,7 @@ const CompletedDeliveries = () => {
                             <th className="text-center">Sender</th>
                             <th className="text-center">Type</th>
                             <th className="text-center">Weight</th>
-                            <th className="text-center">Delivered On</th>
+
                             <th className="text-center">Status</th>
                         </tr>
                     </thead>
@@ -57,9 +57,7 @@ const CompletedDeliveries = () => {
                                 <td className="text-center">{parcel.full_name}</td>
                                 <td className="text-center">{parcel.parcel_type}</td>
                                 <td className="text-center">{parcel.weight} kg</td>
-                                <td className="text-center">
-                                    {new Date(parcel.delivered_at).toLocaleDateString()}
-                                </td>
+                               
                                 <td className="text-center">
                                     <span className="badge badge-success text-white">
                                         Delivered

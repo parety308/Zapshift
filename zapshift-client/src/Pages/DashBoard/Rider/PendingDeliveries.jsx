@@ -65,8 +65,8 @@ const PendingDeliveries = () => {
 
   if (loading) {
     return (
-      <div className="text-center py-10">
-        Loading...
+      <div className="flex justify-center py-10">
+        <span className="loading loading-spinner loading-lg"></span>
       </div>
     );
   }
@@ -78,7 +78,7 @@ const PendingDeliveries = () => {
       <h2 className="text-3xl font-bold mb-1">Pending Deliveries</h2>
 
       <p className="text-gray-500 mb-6">
-        Assigned to {user?.displayName || user?.email} — {deliveries.length} remaining
+        Assigned to {user?.full_name || user?.email} — {deliveries.length} remaining
       </p>
 
       <div className="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
