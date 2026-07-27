@@ -2,31 +2,87 @@ import { Router } from "express";
 import { riderController } from "./rider.controller.js";
 import { protect } from "../../middlewares/auth.middleware.js";
 import { validate } from "../../middlewares/validate.middleware.js";
+import { adminOnly } from "../../middlewares/admin.middleware.js";
 import { z } from "zod";
-
-const applySchema = z.object({
-  vehicleType: z.string().trim().min(2, "Vehicle type is required"),
-  division: z.string().trim().min(1, "Region is required"),
-  district: z.string().trim().min(1, "District is required"),
-});
 
 const router = Router();
 
-router.post("/apply", protect, validate(applySchema), riderController.apply);
-router.get("/me", protect, riderController.getMine);
-router.get("/", protect, riderController.list);
-router.get("/active", protect, riderController.activeList);
-router.patch("/:id/approve", protect, riderController.approve);
-router.delete("/:id", protect, riderController.remove);
+const applySchema = z.object({
+    vehicleType: z.string().trim().min(2),
+    division: z.string().trim().min(1),
+    district: z.string().trim().min(1),
+});
+
+/*
+|--------------------------------------------------------------------------
+| Rider Application
+|--------------------------------------------------------------------------
+*/
+
+router.post(
+    "/apply",
+    protect,
+    validate(applySchema),
+    riderController.apply
+);
+
+router.get(
+    "/me",
+    protect,
+    riderController.getMine
+);
+
+/*
+|--------------------------------------------------------------------------
+| Admin
+|--------------------------------------------------------------------------
+*/
+
+router.get(
+    "/",
+    protect,
+    adminOnly,
+    riderController.list
+);
+
+router.get(
+    "/active",
+    protect,
+    adminOnly,
+    riderController.activeList
+);
+
+router.patch(
+    "/:id/approve",
+    protect,
+    adminOnly,
+    riderController.approve
+);
+
+router.delete(
+    "/:id",
+    protect,
+    adminOnly,
+    riderController.remove
+);
+
+/*
+|--------------------------------------------------------------------------
+| Parcel Assignment
+|--------------------------------------------------------------------------
+*/
+
 router.get(
     "/parcels/unassigned",
     protect,
+    adminOnly,
     riderController.unassignedParcels
 );
 
 router.patch(
     "/assign/:parcelId",
     protect,
+    adminOnly,
     riderController.assign
 );
 
@@ -35,27 +91,35 @@ router.get(
     protect,
     riderController.assigned
 );
+
+/*
+|--------------------------------------------------------------------------
+| Rider Dashboard
+|--------------------------------------------------------------------------
+*/
+
 router.get(
-  "/me/pending",
-  protect,
-  riderController.pendingDeliveries
+    "/me/pending",
+    protect,
+    riderController.pendingDeliveries
 );
 
 router.patch(
-  "/parcels/:parcelId/deliver",
-  protect,
-  riderController.deliverParcel
+    "/parcels/:parcelId/deliver",
+    protect,
+    riderController.deliverParcel
 );
 
 router.get(
-  "/me/completed",
-  protect,
-  riderController.completedDeliveries
+    "/me/completed",
+    protect,
+    riderController.completedDeliveries
 );
 
 router.get(
-  "/me/earnings",
-  protect,
-  riderController.myEarnings
+    "/me/earnings",
+    protect,
+    riderController.myEarnings
 );
+
 export const riderRouter = router;

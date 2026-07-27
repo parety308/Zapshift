@@ -4,89 +4,105 @@ import { sendResponse } from "../../utils/sendResponse.js";
 import { riderService } from "./rider.service.js";
 
 const apply = catchAsync(async (req, res) => {
-  const rider = await riderService.applyAsRider(req.user.user_id, req.body);
-  sendResponse(res, {
-    success: true,
-    statusCode: HttpStatus.CREATED,
-    message: "Rider application submitted",
-    data: rider,
-  });
+
+    const result = await riderService.applyAsRider(
+        req.user.user_id,
+        req.body
+    );
+
+    sendResponse(res, {
+        success: true,
+        statusCode: HttpStatus.CREATED,
+        message: "Application submitted successfully",
+        data: result,
+    });
+
 });
 
 const getMine = catchAsync(async (req, res) => {
-  const rider = await riderService.getRiderByUserId(req.user.user_id);
-  sendResponse(res, {
-    success: true,
-    statusCode: HttpStatus.OK,
-    message: rider ? "Rider profile fetched" : "No rider application on file",
-    data: rider,
-  });
+
+    const result = await riderService.getRiderByUserId(
+        req.user.user_id
+    );
+
+    sendResponse(res,{
+        success:true,
+        statusCode:200,
+        message:"Rider profile",
+        data:result
+    });
+
 });
 
-const list = catchAsync(async (req, res) => {
-  const riders = await riderService.listRiders();
-  sendResponse(res, { success: true, statusCode: HttpStatus.OK, message: "Riders fetched", data: riders });
+const list = catchAsync(async(req,res)=>{
+
+    const result = await riderService.listRiders();
+
+    sendResponse(res,{
+        success:true,
+        statusCode:200,
+        message:"All riders",
+        data:result
+    });
+
 });
 
 const activeList = catchAsync(async(req,res)=>{
 
-  const riders = await riderService.activeRiders();
+    const result = await riderService.activeRiders();
 
-
-  sendResponse(res,{
-    success:true,
-    statusCode:HttpStatus.OK,
-    message:"Active riders fetched",
-    data:riders
-  });
-
-});
-
-const approve = catchAsync(async (req, res) => {
-
-  const rider = await riderService.approveRider(
-    req.params.id
-  );
-
-  sendResponse(res, {
-    success: true,
-    statusCode: 200,
-    message: "Rider approved",
-    data: rider
-  });
+    sendResponse(res,{
+        success:true,
+        statusCode:200,
+        message:"Active riders",
+        data:result
+    });
 
 });
 
+const approve = catchAsync(async(req,res)=>{
 
-const remove = catchAsync(async (req, res) => {
+    const result = await riderService.approveRider(
+        req.params.id
+    );
 
-  await riderService.removeRider(
-    req.params.id
-  );
+    sendResponse(res,{
+        success:true,
+        statusCode:200,
+        message:"Rider approved",
+        data:result
+    });
 
-  sendResponse(res, {
-    success: true,
-    statusCode: 200,
-    message: "Rider removed"
-  });
+});
+
+const remove = catchAsync(async(req,res)=>{
+
+    await riderService.removeRider(req.params.id);
+
+    sendResponse(res,{
+        success:true,
+        statusCode:200,
+        message:"Rider removed"
+    });
 
 });
 
-const unassignedParcels = catchAsync(async (req, res) => {
+const unassignedParcels = catchAsync(async(req,res)=>{
 
-  const data = await riderService.getUnassignedParcels();
+    const result = await riderService.getUnassignedParcels();
 
-  sendResponse(res,{
-    success:true,
-    statusCode:200,
-    message:"Unassigned parcels fetched",
-    data
-  });
+    sendResponse(res,{
+        success:true,
+        statusCode:200,
+        message:"Unassigned parcels",
+        data:result
+    });
 
 });
+
 const assign = catchAsync(async(req,res)=>{
 
-    const parcel = await riderService.assignRider(
+    const result = await riderService.assignRider(
         req.params.parcelId,
         req.body.rider_id
     );
@@ -94,14 +110,15 @@ const assign = catchAsync(async(req,res)=>{
     sendResponse(res,{
         success:true,
         statusCode:200,
-        message:"Rider assigned successfully",
-        data:parcel
+        message:"Parcel assigned",
+        data:result
     });
 
 });
+
 const assigned = catchAsync(async(req,res)=>{
 
-    const data = await riderService.getAssignedParcels(
+    const result = await riderService.getAssignedParcels(
         req.params.riderId
     );
 
@@ -109,29 +126,29 @@ const assigned = catchAsync(async(req,res)=>{
         success:true,
         statusCode:200,
         message:"Assigned parcels",
-        data
+        data:result
     });
 
 });
 
-const pendingDeliveries = catchAsync(async (req, res) => {
+const pendingDeliveries = catchAsync(async(req,res)=>{
 
-  const data = await riderService.getPendingDeliveries(
-    req.user.user_id
-  );
+    const result = await riderService.getPendingDeliveries(
+        req.user.user_id
+    );
 
-  sendResponse(res,{
-    success:true,
-    statusCode:200,
-    message:"Pending deliveries",
-    data
-  });
+    sendResponse(res,{
+        success:true,
+        statusCode:200,
+        message:"Pending deliveries",
+        data:result
+    });
 
 });
 
 const deliverParcel = catchAsync(async(req,res)=>{
 
-    const data = await riderService.markDelivered(
+    const result = await riderService.markDelivered(
         req.params.parcelId
     );
 
@@ -139,13 +156,14 @@ const deliverParcel = catchAsync(async(req,res)=>{
         success:true,
         statusCode:200,
         message:"Parcel delivered",
-        data
+        data:result
     });
 
 });
+
 const completedDeliveries = catchAsync(async(req,res)=>{
 
-    const data = await riderService.getCompletedDeliveries(
+    const result = await riderService.getCompletedDeliveries(
         req.user.user_id
     );
 
@@ -153,14 +171,14 @@ const completedDeliveries = catchAsync(async(req,res)=>{
         success:true,
         statusCode:200,
         message:"Completed deliveries",
-        data
+        data:result
     });
 
 });
 
 const myEarnings = catchAsync(async(req,res)=>{
 
-    const data = await riderService.getMyEarnings(
+    const result = await riderService.getMyEarnings(
         req.user.user_id
     );
 
@@ -168,25 +186,28 @@ const myEarnings = catchAsync(async(req,res)=>{
         success:true,
         statusCode:200,
         message:"My earnings",
-        data
+        data:result
     });
 
 });
+
 export const riderController = {
 
-  apply,
-  getMine,
-  list,
-  activeList,
-  approve,
-  remove,
+    apply,
+    getMine,
 
-  unassignedParcels,
-  assign,
-  assigned,
+    list,
+    activeList,
+    approve,
+    remove,
 
-  pendingDeliveries,
-  deliverParcel,
-  completedDeliveries,
-  myEarnings
+    unassignedParcels,
+    assign,
+    assigned,
+
+    pendingDeliveries,
+    deliverParcel,
+    completedDeliveries,
+    myEarnings
+
 };

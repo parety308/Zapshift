@@ -41,18 +41,26 @@ export const initializeDatabase = async () => {
     `);
     // Rider
     await pool.query(`
-      CREATE TABLE IF NOT EXISTS Rider (
-        rider_id VARCHAR(10) PRIMARY KEY,
-        vehicle_type VARCHAR(20) NOT NULL,
-        availability_status VARCHAR(20) NOT NULL,
-        user_id VARCHAR(10) NOT NULL,
-        region_id VARCHAR(10) NOT NULL,
-        admin_id VARCHAR(10) NOT NULL,
+      CREATE TABLE Rider(
+    rider_id VARCHAR(10) PRIMARY KEY,
 
-        FOREIGN KEY(user_id) REFERENCES User(user_id),
-        FOREIGN KEY(region_id) REFERENCES Region(region_id),
-        FOREIGN KEY(admin_id) REFERENCES Admin(admin_id)
-      )
+    vehicle_type VARCHAR(20) NOT NULL,
+
+    approval_status VARCHAR(20) NOT NULL DEFAULT 'pending',
+
+    availability_status VARCHAR(20) NOT NULL DEFAULT 'offline',
+
+    user_id VARCHAR(10) NOT NULL,
+
+    region_id VARCHAR(10) NOT NULL,
+
+    admin_id VARCHAR(10) NOT NULL,
+
+    FOREIGN KEY(user_id) REFERENCES User(user_id),
+    FOREIGN KEY(region_id) REFERENCES Region(region_id),
+    FOREIGN KEY(admin_id) REFERENCES Admin(admin_id)
+
+     )
     `);
 
     // Pricing Rule
