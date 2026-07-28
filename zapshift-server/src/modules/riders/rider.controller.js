@@ -19,6 +19,19 @@ const apply = catchAsync(async (req, res) => {
 
 });
 
+const pendingApplications = catchAsync(async (req, res) => {
+
+    const result =
+        await riderService.pendingRiderApplications();
+
+    sendResponse(res, {
+        success: true,
+        statusCode: 200,
+        message: "Pending rider applications",
+        data: result
+    });
+
+});
 const getMine = catchAsync(async (req, res) => {
 
     const result = await riderService.getRiderByUserId(
@@ -197,17 +210,26 @@ export const riderController = {
     getMine,
 
     list,
+    pendingApplications,
+
     activeList,
+
     approve,
+
     remove,
 
     unassignedParcels,
+
     assign,
+
     assigned,
 
     pendingDeliveries,
+
     deliverParcel,
+
     completedDeliveries,
+
     myEarnings
 
 };

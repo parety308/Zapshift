@@ -1,5 +1,4 @@
 import createHttpError from "http-errors";
-import bcrypt from "bcryptjs";
 import { pool } from "../../config/db.js";
 import { generateId } from "../../utils/generateId.js";
 import { generateToken } from "../../utils/generateToken.js";
@@ -22,7 +21,6 @@ const registerUser = async ({ name, email, password }) => {
     throw createHttpError(409, "An account with this email already exists.");
   }
 
-  const hashedPassword = await bcrypt.hash(password, 10);
 
   const user_id = await generateId(
     "User",
@@ -41,7 +39,7 @@ const registerUser = async ({ name, email, password }) => {
       user_id,
       name,
       email,
-      hashedPassword,
+      password,
       "user"
     ]
   );
@@ -91,27 +89,18 @@ const loginUser = async ({ email, password }) => {
 
 
   // Check password
-  const passwordMatches = await bcrypt.compare(
-    password,
-    dbUser.password
-  );
-
-
-  if (!passwordMatches) {
+  if (password !== dbUser.password) {
     throw createHttpError(
       401,
       "Invalid email or password."
     );
   }
 
-
-
-  
   const user = {
     id: dbUser.user_id,
     email: dbUser.email,
     full_name: dbUser.full_name,
-    role:dbUser.role
+    role: dbUser.role
   };
 
 
@@ -119,7 +108,7 @@ const loginUser = async ({ email, password }) => {
     user_id: dbUser.user_id,
     email: dbUser.email,
     full_name: dbUser.full_name,
-    role:dbUser.role
+    role: dbUser.role
   });
 
 

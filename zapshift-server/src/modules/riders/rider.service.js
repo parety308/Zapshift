@@ -2,7 +2,6 @@ import createHttpError from "http-errors";
 import { pool } from "../../config/db.js";
 import { generateId } from "../../utils/generateId.js";
 import { regionService } from "../regions/region.service.js";
-import { getDefaultAdminId } from "../../config/seed.js";
 
 /**
  * Apply as Rider
@@ -40,14 +39,7 @@ const applyAsRider = async (
             district
         );
 
-    const admin_id = await getDefaultAdminId();
-
-    if (!admin_id) {
-        throw createHttpError(
-            500,
-            "No admin found."
-        );
-    }
+   
 
     const rider_id = await generateId(
         "Rider",
@@ -64,8 +56,7 @@ const applyAsRider = async (
             vehicle_type,
             availability_status,
             user_id,
-            region_id,
-            admin_id
+            region_id
         )
 
         VALUES
@@ -76,10 +67,9 @@ const applyAsRider = async (
         [
             rider_id,
             vehicleType,
-            "available",
+            "pending",
             user_id,
-            region.region_id,
-            admin_id
+            region.region_id
         ]
     );
 
@@ -169,6 +159,40 @@ const listRiders = async () => {
 };
 
 
+const pendingRiderApplications = async () => {
+
+    const [rows] = await pool.query(
+        `
+        SELECT
+
+            r.rider_id,
+            r.vehicle_type,
+            r.availability_status,
+
+            u.full_name,
+            u.email,
+            u.phone,
+
+            rg.division,
+            rg.district
+
+        FROM Rider r
+
+        JOIN User u
+            ON u.user_id = r.user_id
+
+        JOIN Region rg
+            ON rg.region_id = r.region_id
+
+        WHERE r.availability_status = 'pending'
+
+        ORDER BY r.rider_id ASC
+        `
+    );
+
+    return rows;
+
+};
 /**
  * Active Riders
  */
@@ -781,6 +805,8 @@ export const riderService = {
     getRiderByUserId,
 
     listRiders,
+
+    pendingRiderApplications,
 
     activeRiders,
 

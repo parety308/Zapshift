@@ -1,14 +1,8 @@
 import { pool } from "./db.js";
 
-/**
- * SCHEMA SOURCE OF TRUTH
- * -----------------------
- * This mirrors the normalized schema exactly as provided (Region, Admin, User,
- * Rider, Pricing_rule, Parcel, Payment). Do NOT add/remove columns here —
- * every other part of the backend adapts to this shape, not the other way
- * around.
- */
+
 export const initializeDatabase = async () => {
+  
   try {
     // Region
     await pool.query(`
@@ -18,8 +12,6 @@ export const initializeDatabase = async () => {
         district VARCHAR(50) NOT NULL
       )
     `);
-
-
 
     // User
     await pool.query(`
@@ -54,7 +46,7 @@ export const initializeDatabase = async () => {
 
     region_id VARCHAR(10) NOT NULL,
 
-    admin_id VARCHAR(10) NOT NULL,
+    admin_id VARCHAR(10) ,
 
     FOREIGN KEY(user_id) REFERENCES User(user_id),
     FOREIGN KEY(region_id) REFERENCES Region(region_id),

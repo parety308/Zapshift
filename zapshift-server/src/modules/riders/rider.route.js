@@ -2,7 +2,6 @@ import { Router } from "express";
 import { riderController } from "./rider.controller.js";
 import { protect } from "../../middlewares/auth.middleware.js";
 import { validate } from "../../middlewares/validate.middleware.js";
-import { adminOnly } from "../../middlewares/admin.middleware.js";
 import { z } from "zod";
 
 const router = Router();
@@ -46,6 +45,11 @@ router.get(
 );
 
 router.get(
+    "/applications/pending",
+    protect,
+    riderController.pendingApplications
+);
+router.get(
     "/active",
     protect,
     adminOnly,
@@ -75,14 +79,12 @@ router.delete(
 router.get(
     "/parcels/unassigned",
     protect,
-    adminOnly,
     riderController.unassignedParcels
 );
 
 router.patch(
     "/assign/:parcelId",
     protect,
-    adminOnly,
     riderController.assign
 );
 
